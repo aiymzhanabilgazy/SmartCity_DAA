@@ -12,6 +12,15 @@ import com.google.gson.Gson;
 
 public class GraphReader {
 
+    public static class GraphWithSource {
+        public final Graph graph;
+        public final int source;
+
+        public GraphWithSource(Graph graph, int source) {
+            this.graph = graph;
+            this.source = source;
+        }
+    }
     public static class GraphData {
         public boolean directed;
         public int n;
@@ -30,7 +39,7 @@ public class GraphReader {
         public String structure;
         public boolean multi_scc;
     }
-    public static Graph readGraph(String filePath) throws IOException {
+    public static GraphWithSource readGraph(String filePath) throws IOException {
         Gson gson = new Gson ();
         try(Reader reader = new FileReader(filePath)) {
             GraphData data = gson.fromJson(reader,GraphData.class);
@@ -39,15 +48,15 @@ public class GraphReader {
             for (EdgeData edge : data.edges) {
                 graph.addEdge(edge.u, edge.v, edge.w);
             }
-            return graph;
+            return new GraphWithSource(graph, data.source);
         }
     }
-    public static List<Graph> readAllGraphs(String folderPath) throws IOException{
+    public static List<GraphWithSource> readAllGraphs(String folderPath) throws IOException{
         File folder = new File(folderPath);
         if(!folder.exists() || !folder.isDirectory()){
             throw new IllegalArgumentException("Folder does not exist or is not a folder");
         }
-        List<Graph> graphs = new ArrayList<>();
+        List<GraphWithSource> graphs = new ArrayList<>();
         for(File file : Objects.requireNonNull(folder.listFiles())) {
             if(file.getName().endsWith(".json")) {
                 graphs.add(readGraph(file.getAbsolutePath()));

@@ -3,6 +3,7 @@ import graph.reader.GraphReader;
 import graph.scc.CondensationGraph;
 import graph.scc.Kosaraju;
 import graph.topo.DfsTopoSort;
+import graph.dagsp.DagShortestPaths;
 
 import java.io.File;
 import java.util.List;
@@ -26,15 +27,17 @@ public class Main {
             }
             System.out.println("\nProcessing file: " + file.getName());
 
-            Graph graph = GraphReader.readGraph(file.getAbsolutePath());
+            GraphReader.GraphWithSource loaded = GraphReader.readGraph(file.getAbsolutePath());
+            Graph graph = loaded.graph;
+            int source = loaded.source;
 
             Kosaraju kos = new Kosaraju();
             Kosaraju.Result sccRes = kos.findSCC(graph);
             System.out.println("Total SSCs: " + sccRes.getComponents().size());
-            int i = 0;
+            int compIndex = 0;
             for (List<Integer> comp : sccRes.getComponents()) {
-                System.out.println("Component " + i + " (size = " + comp.size() + "): "+comp);
-                i++;
+                System.out.println("Component " + compIndex + " (size = " + comp.size() + "): "+comp);
+                compIndex++;
             }
             Graph dag = CondensationGraph.buildCondensation(graph, sccRes);
             System.out.println("Condensation DAG has : " + dag.getNodesCount() + "nodes");
@@ -47,6 +50,32 @@ public class Main {
             for (int componentIndex : topOrder) {
                 System.out.println("Component " + componentIndex + "->" + sccRes.getComponents().get(componentIndex));
             }
+
+            System.out.println("--- Shortest and Longest Path from source" + source + " ---");
+
+            DagShortestPaths.Result shortest = DagShortestPaths.shortestPathDAG(dag, source);
+            DagShortestPaths.Result longest = DagShortestPaths.longestPathDAG(dag, source);
+
+            System.out.println("\nShortest distances (edge-weight model):");
+            for(int nodeIndex = 0; nodeIndex< dag.getNodesCount();nodeIndex++) {
+                double dist = shortest.distance[nodeIndex];
+                if(Double.isInfinite(dist)) {
+                    System.out.printf(" to %d = no path%n", nodeIndex);
+                }else{
+                    System.out.printf(" to %d = %.2f%n", nodeIndex, dist);
+                }
+            }
+            double maxDist = Double.NEGATIVE_INFINITY;
+            int target = -1;
+            for(int i=0; i<dag.getNodesCount(); i++){
+                if(longest.distance[i] > maxDist){
+                    maxDist = longest.distance[i];
+                    target = i;
+                }
+            }
+            System.out.println("\nCritical path (longest path via max-DP):");
+            System.out.println(" Length = "+maxDist);
+            System.out.println(" Path = "+ longest.reconstructPath(target));
         }
         System.out.println("\nAll graphs processed successfully");
     }
