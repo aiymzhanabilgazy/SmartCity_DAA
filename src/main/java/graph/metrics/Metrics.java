@@ -6,22 +6,18 @@ public class Metrics {
     public long pushes = 0;
     public long pops = 0;
     public long relaxations = 0;
-
     private long startTime = 0;
     private long endTime = 0;
 
     public void start() {
         startTime = System.nanoTime();
     }
-
     public void stop() {
         endTime = System.nanoTime();
     }
-
     public long getElapsedTimeNs() {
         return endTime - startTime;
     }
-
     public void reset() {
         dfsVisits = dfsEdges = pushes = pops = relaxations = 0;
         startTime = endTime = 0;

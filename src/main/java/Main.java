@@ -23,7 +23,6 @@ public class Main {
             System.out.println("Folder does not exist or is not a folder");
             return;
         }
-
         System.out.println("--- SSC + Condensation + Topological Order ---");
 
         for (File file : Objects.requireNonNull(folder.listFiles())) {
