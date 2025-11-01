@@ -1,5 +1,6 @@
 package graph.dagsp;
 
+import graph.metrics.Metrics;
 import graph.model.Edge;
 import graph.model.Graph;
 import graph.topo.DfsTopoSort;
@@ -10,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class DagShortestPaths {
-    
+
     public static class Result {
         public final double[] distance;
         public final int[] parent;
@@ -30,7 +31,8 @@ public class DagShortestPaths {
             return path;
         }
     }
-    public static Result shortestPathDAG(Graph dag, int source){
+    public static Result shortestPathDAG(Graph dag, int source,Metrics metrics){
+        metrics.start();
         int n = dag.getNodesCount();
         double[] distance = new double[n];
         int[] parent = new int[n];
@@ -39,11 +41,12 @@ public class DagShortestPaths {
         distance[source] = 0;
 
         DfsTopoSort top = new DfsTopoSort();
-        List<Integer> order = top.topoSort(dag);
+        List<Integer> order = top.topoSort(dag,new Metrics());
 
         for(int u : order){
             if(distance[u] != Double.POSITIVE_INFINITY){
                 for(Edge e : dag.getAdjList().get(u)){
+                    metrics.relaxations++;
                     if(distance[e.getTo()] > distance[u]+e.getWeight()){
                         distance[e.getTo()] = distance[u]+e.getWeight();
                         parent[e.getTo()] = u;
@@ -51,9 +54,11 @@ public class DagShortestPaths {
                 }
             }
         }
+        metrics.stop();
         return new Result(distance, parent, source);
     }
-    public static Result longestPathDAG(Graph dag, int source){
+    public static Result longestPathDAG(Graph dag, int source,Metrics metrics){
+        metrics.start();
         int n = dag.getNodesCount();
         double[] distance = new double[n];
         int[] parent = new int[n];
@@ -62,11 +67,12 @@ public class DagShortestPaths {
         distance[source] = 0;
 
         DfsTopoSort top = new DfsTopoSort();
-        List<Integer> order = top.topoSort(dag);
+        List<Integer> order = top.topoSort(dag,new Metrics());
 
         for(int u : order){
             if(distance[u] != Double.NEGATIVE_INFINITY){
                 for(Edge e : dag.getAdjList().get(u)){
+                    metrics.relaxations++;
                     if(distance[e.getTo()] < distance[u]+e.getWeight()){
                         distance[e.getTo()] = distance[u]+e.getWeight();
                         parent[e.getTo()] = u;
@@ -74,6 +80,7 @@ public class DagShortestPaths {
                 }
             }
         }
+        metrics.stop();
         return new Result(distance,parent,source);
     }
 

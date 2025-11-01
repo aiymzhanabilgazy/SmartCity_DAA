@@ -1,0 +1,10 @@
+file,scc_time_ns,dfs_visits,dfs_edges,topo_time_ns,pushes,pops,sp_time_ns,relaxations
+tasks_medium_2.json,145833ns,30,170,20708ns,1,1,23208ns,0
+tasks_medium_3.json,57417ns,36,100,2500ns,1,1,4417ns,0
+tasks_large_3.json,123167ns,90,208,39459ns,11,11,23958ns,10
+tasks_small_2.json,36667ns,18,76,3333ns,1,1,4250ns,0
+tasks_small_3.json,20666ns,14,38,2959ns,1,1,5791ns,0
+tasks_large_2.json,128125ns,70,416,3167ns,1,1,4250ns,0
+tasks_large_1.json,43750ns,50,54,15166ns,20,20,18667ns,1
+tasks_small_1.json,25084ns,16,20,4542ns,5,5,7375ns,0
+tasks_medium_1.json,21875ns,24,26,12333ns,11,11,11250ns,5

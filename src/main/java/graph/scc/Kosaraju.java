@@ -1,5 +1,6 @@
 package graph.scc;
 
+import graph.metrics.Metrics;
 import graph.model.Edge;
 import graph.model.Graph;
 import java.util.*;
@@ -24,14 +25,15 @@ public class Kosaraju {
         }
     }
 
-    public Result findSCC(Graph graph) {
+    public Result findSCC(Graph graph,Metrics metrics) {
+        metrics.start();
         int n = graph.getNodesCount();
         boolean[] visited = new boolean[n];
         Deque<Integer> stack = new ArrayDeque<>();
 
         for(int i = 0; i < n; i++) {
             if(!visited[i]) {
-                dfs1(graph,i,visited,stack);
+                dfs1(graph,i,visited,stack,metrics);
             }
         }
         Graph transpose = graph.getTranspose();
@@ -46,7 +48,7 @@ public class Kosaraju {
             int node = stack.pop();
             if(!visited[node]) {
                 List<Integer> currentComp = new ArrayList<>();
-                dfs2(transpose,node,visited,currentComp);
+                dfs2(transpose,node,visited,currentComp,metrics);
                 for(int v : currentComp) {
                     component[v] = componentIndex;
                 }
@@ -54,23 +56,28 @@ public class Kosaraju {
                 componentIndex++;
             }
         }
+        metrics.stop();
         return new Result(component, components);
     }
-    private void dfs1(Graph graph, int node, boolean[] visited, Deque<Integer> stack) {
+    private void dfs1(Graph graph, int node, boolean[] visited, Deque<Integer> stack, Metrics metrics) {
         visited[node] = true;
+        metrics.dfsVisits++;
         for(Edge e : graph.getAdjList().get(node)) {
+            metrics.dfsEdges++;
             if (!visited[e.getTo()]) {
-                dfs1(graph, e.getTo(), visited, stack);
+                dfs1(graph, e.getTo(), visited, stack,metrics);
             }
         }
         stack.push(node);
     }
-    private void dfs2(Graph graph, int node, boolean[] visited,List<Integer> comp) {
+    private void dfs2(Graph graph, int node, boolean[] visited,List<Integer> comp, Metrics metrics) {
         visited[node] = true;
         comp.add(node);
+        metrics.dfsVisits++;
         for(Edge e : graph.getAdjList().get(node)) {
+            metrics.dfsEdges++;
             if(!visited[e.getTo()]){
-                dfs2(graph,e.getTo(),visited,comp);
+                dfs2(graph,e.getTo(),visited,comp,metrics);
             }
         }
     }
