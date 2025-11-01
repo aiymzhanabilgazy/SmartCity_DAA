@@ -1,4 +1,5 @@
 
+import graph.metrics.Metrics;
 import graph.model.Graph;
 import graph.dagsp.DagShortestPaths;
 import org.junit.jupiter.api.Test;
@@ -9,8 +10,9 @@ public class DagShortestPathsTest {
     @Test
     public void testSingleNodeNoEdges() {
         Graph g = new Graph(1, true);
-        DagShortestPaths.Result shortest = DagShortestPaths.shortestPathDAG(g, 0);
-        DagShortestPaths.Result longest = DagShortestPaths.longestPathDAG(g, 0);
+        Metrics metrics = new Metrics();
+        DagShortestPaths.Result shortest = DagShortestPaths.shortestPathDAG(g, 0,metrics);
+        DagShortestPaths.Result longest = DagShortestPaths.longestPathDAG(g, 0,metrics);
         assertEquals(0.0, shortest.distance[0]);
         assertEquals(0.0, longest.distance[0]);
     }
@@ -23,7 +25,8 @@ public class DagShortestPathsTest {
         g.addEdge(1, 3, 7);
         g.addEdge(2, 4, 3);
 
-        DagShortestPaths.Result res = DagShortestPaths.shortestPathDAG(g, 0);
+        Metrics metrics = new Metrics();
+        DagShortestPaths.Result res = DagShortestPaths.shortestPathDAG(g, 0,metrics);
         assertEquals(0.0, res.distance[0]);
         assertEquals(2.0, res.distance[1]);
         assertEquals(3.0, res.distance[2]);
@@ -38,7 +41,8 @@ public class DagShortestPathsTest {
         g.addEdge(0, 2, 1);
         g.addEdge(2, 3, 4);
 
-        DagShortestPaths.Result res = DagShortestPaths.longestPathDAG(g, 0);
+        Metrics metrics = new Metrics();
+        DagShortestPaths.Result res = DagShortestPaths.longestPathDAG(g, 0,metrics);
 
         double maxDist = -1;
         int target = -1;
@@ -54,7 +58,8 @@ public class DagShortestPathsTest {
     @Test
     public void testNoEdgesGraph() {
         Graph g = new Graph(3, true);
-        DagShortestPaths.Result res = DagShortestPaths.shortestPathDAG(g, 0);
+        Metrics metrics = new Metrics();
+        DagShortestPaths.Result res = DagShortestPaths.shortestPathDAG(g, 0,metrics);
         assertEquals(Double.POSITIVE_INFINITY, res.distance[1]);
         assertEquals(Double.POSITIVE_INFINITY, res.distance[2]);
     }

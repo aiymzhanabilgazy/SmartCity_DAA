@@ -1,4 +1,5 @@
 
+import graph.metrics.Metrics;
 import graph.model.Graph;
 import graph.scc.CondensationGraph;
 import graph.scc.Kosaraju;
@@ -17,7 +18,8 @@ public class CondensationGraphTest {
         g.addEdge(1, 2, 1);
         g.addEdge(2, 3, 1);
 
-        Kosaraju.Result scc = new Kosaraju().findSCC(g);
+        Metrics metrics = new Metrics();
+        Kosaraju.Result scc = new Kosaraju().findSCC(g, metrics);
         Graph dag = CondensationGraph.buildCondensation(g, scc);
 
         assertEquals(3, dag.getNodesCount());

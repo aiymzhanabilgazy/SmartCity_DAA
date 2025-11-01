@@ -1,7 +1,9 @@
 
+import graph.metrics.Metrics;
 import graph.model.Graph;
 import graph.topo.DfsTopoSort;
 import org.junit.jupiter.api.Test;
+
 
 import java.util.List;
 
@@ -13,7 +15,8 @@ public class DfsTopoSortTest {
     public void testEmptyGraph() {
         Graph g = new Graph(0, true);
         DfsTopoSort topo = new DfsTopoSort();
-        List<Integer> order = topo.topoSort(g);
+        Metrics metrics = new Metrics();
+        List<Integer> order = topo.topoSort(g, metrics);
         assertTrue(order.isEmpty());
     }
 
@@ -21,7 +24,8 @@ public class DfsTopoSortTest {
     public void testSingleNode() {
         Graph g = new Graph(1, true);
         DfsTopoSort topo = new DfsTopoSort();
-        List<Integer> order = topo.topoSort(g);
+        Metrics metrics = new Metrics();
+        List<Integer> order = topo.topoSort(g, metrics);
         assertEquals(List.of(0), order);
     }
 
@@ -33,7 +37,8 @@ public class DfsTopoSortTest {
         g.addEdge(0, 3, 1);
 
         DfsTopoSort topo = new DfsTopoSort();
-        List<Integer> order = topo.topoSort(g);
+        Metrics metrics = new Metrics();
+        List<Integer> order = topo.topoSort(g, metrics);
 
         assertEquals(4, order.size());
         assertTrue(order.indexOf(0) < order.indexOf(1));
